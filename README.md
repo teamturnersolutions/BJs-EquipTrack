@@ -1,20 +1,27 @@
-# BJs EquipTrack - Technical Documentation & Deployment Roadmap
-Deep dive into the **BJs EquipTrack** codebase, explaining its architecture, and component organization.
+## **BJ's EquipTrack**
+**Hardware tracking simplified**
+
+**BJ's EquipTrack** is a high-performance equipment management system built to streamline the tracking of essential hardware. Originally developed as InvTrack Pro, the system has been fully migrated to a **relational SQLite database** for robust data handling and persistence.
 
 ---
 
-## 🏗️ Architecture Overview
+#### **🚀 Key Features**
+*   **Barcode Quick Scan**: The application’s primary draw is its rapid scanning capability. Users can use the **Quick Scan Badge** to identify themselves and the **Quick Scan Item** field to instantly add items to a transaction without leaving the workflow.
+*   **Comprehensive Inventory Management**: Tracks 60 RF units, 32 Radios, and specialized tools like Banders, Grinders, iPads, and Cameras.
+*   **Advanced Filtering**: Users can filter the inventory by **status** (All, Available, Checked Out) or by **category** (e.g., Radios or iPads) to find equipment quickly.
+*   **Detailed Transaction History**: Maintains a log of the **last 100 actions**, recording separate, precise entries and timestamps for every checkout and return.
+*   **Real-time UI Updates**: Utilizing **Next.js Server Actions**, the system revalidates data instantly upon check-in or checkout, ensuring the dashboard always reflects the current status of the fleet.
 
-BJs EquipTrack is built using **Next.js 15** with **App Router**, utilizing Server Components for rendering and Server Actions for data mutations.
-The application follows a modern Full-Stack Next.js architecture, containerized for simplified deployment and scalability.
+---
 
-## 🧩 Technology Stack
-Framework: Next.js 15 (App Router)
-Database: SQLite via Prisma ORM
-Styling: Tailwind CSS + Shadcn UI
-Runtime: Node.js 20 (Inside Docker)
+#### **🧩 Technology Stack**
+*   **Framework**: Next.js 15 (App Router)
+*   **Database**: SQLite via Prisma ORM
+*   **Styling**: Tailwind CSS + Shadcn UI
+*   **Runtime**: Node.js 20 (Containerized)
 
-### 📁 Project Structure
+---
+#### 📁 Project Structure
 
 ```text
 ├── src/
@@ -44,31 +51,29 @@ Runtime: Node.js 20 (Inside Docker)
 ---
 ## 🧩 Component Breakdown
 
-### 1. Data Access Layer (`src/lib/data.ts`)
+#### 1. Data Access Layer (`src/lib/data.ts`)
 This is the heart of the application's data handling. It currently uses `fs` to read and write to CSV files.
 - `getInventoryItems()`: Loads all equipment.
 - `updateInventory()`: Merges updates back into the CSV.
 - `getTeamMembers()`: Loads the list of personnel.
 
-### 2. Server Actions (`src/app/actions.ts`)
+#### 2. Server Actions (`src/app/actions.ts`)
 Encapsulates business logic that runs on the server.
 - `checkOutEquipment`: Validates status, updates the item with the member's name/ID, and triggers a revalidation of the UI.
 - `checkInEquipment`: Resets the item status to 'Available' and clears assignment data.
 
-### 3. UI Components (`src/components/`)
+#### 3. UI Components (`src/components/`)
 - **Inventory Card**: Responsive card showing item thumbnail, status badge, and assignment details. It uses conditional styling based on the `status` field.
 - **UI Directory**: Contains specialized components like Buttons, Dialogs, and Select menus (standard Shadcn-style architecture).
 
 
-## 🛠️ BJ's EquipTrack 🛠️
-
-### 🚀 Deployment Guide (Docker Only)
+## 🚀 Deployment Guide (Docker)
 The primary and intended way to run BJ's EquipTrack is using Docker Compose. This handles the application setup, database initialization, and networking in a single step.
 
-### 📦 Step 1: Install Docker & Docker Compose
+#### 📦 Step 1: Install Docker Desktop
 Follow the instructions for your Operating System:
 
-### 🪟 Windows
+#### 🪟 Windows
 Download and install [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
 - During installation:
 Ensure the "Use the WSL 2 based engine" option is selected.
@@ -76,12 +81,12 @@ Ensure the "Use the WSL 2 based engine" option is selected.
 Once installed, launch Docker Desktop and wait for the **"Engine Running"** status.
 
 **NOTE:** Docker Compose is included automatically. 
-### Verify in PowerShell:
+#### Verify in PowerShell:
 ```powershell
 docker compose version
 ```
 
-### 🍎 macOS
+#### 🍎 macOS
 Download and install [Docker Desktop for Mac](https://docs.docker.com/desktop/setup/install/mac-install/) (select Apple Silicon or Intel as appropriate).
 Launch Docker Desktop from your Applications folder.
 Verify in Terminal: 
@@ -89,7 +94,7 @@ Verify in Terminal:
 docker compose version.
 ```
 
-### 🐧 Linux
+#### 🐧 Linux
 Install Docker: 
 ```bash
 sudo apt-get update && sudo apt-get install docker.io.
@@ -110,7 +115,7 @@ Verify in Terminal:
 docker compose version.
 ```
 
-### 🛠️ Step 2: Launch the Application
+#### 🛠️ Step 2: Launch the Application
 *Clone/Download this repository.*
 ```bash
 git clone https://github.com/teamturnersolutions/BJs-EquipTrack.git
@@ -123,15 +128,15 @@ cd BJs-EquipTrack
 ```bash
 docker compose up -d --build 
 ```
-### NOTE:
+#### NOTE:
 - -d Runs the container in the background (detached).
 - --build Ensures the latest source code is cooked into the image.
 
-## Access the Web Interface:
+### Access the Web Interface:
 URL:
 [http://localhost:9002](http://localhost:9002)
 
-## �️ Database Management
+#### �️ Database Management
 Since the database (SQLite) runs inside the container, management is handled through the container volume.
 - Data Persistence: Your database is stored in the ./prisma directory on your host machine. It will survive container restarts and updates.
 - Bulk Import: To import your CSV data (if not already done), ensure your .csv files are in the project root and run:
