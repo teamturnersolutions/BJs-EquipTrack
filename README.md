@@ -1,12 +1,18 @@
-# BJs EquipTrack - Technical Documentation & Roadmap
-
-This document provides a deep dive into the **InvTrack Pro** codebase, explaining its architecture, component organization, and providing a step-by-step guide for migrating from a CSV-based data store to a robust **SQLite** database.
+# BJs EquipTrack - Technical Documentation & Deployment Roadmap
+Deep dive into the **BJs EquipTrack** codebase, explaining its architecture, and component organization.
 
 ---
 
 ## 🏗️ Architecture Overview
 
-BJs EquipTrack is built using **Next.js 15** with the **App Router**, utilizing Server Components for rendering and Server Actions for data mutations.
+BJs EquipTrack is built using **Next.js 15** with **App Router**, utilizing Server Components for rendering and Server Actions for data mutations.
+The application follows a modern Full-Stack Next.js architecture, containerized for simplified deployment and scalability.
+
+## 🧩 Technology Stack
+Framework: Next.js 15 (App Router)
+Database: SQLite via Prisma ORM
+Styling: Tailwind CSS + Shadcn UI
+Runtime: Node.js 20 (Inside Docker)
 
 ### 📁 Project Structure
 
@@ -36,7 +42,6 @@ BJs EquipTrack is built using **Next.js 15** with the **App Router**, utilizing 
 ```
 
 ---
-
 ## 🧩 Component Breakdown
 
 ### 1. Data Access Layer (`src/lib/data.ts`)
@@ -54,71 +59,84 @@ Encapsulates business logic that runs on the server.
 - **Inventory Card**: Responsive card showing item thumbnail, status badge, and assignment details. It uses conditional styling based on the `status` field.
 - **UI Directory**: Contains specialized components like Buttons, Dialogs, and Select menus (standard Shadcn-style architecture).
 
----
 
-## 🗄️ SQLite Integration Guide
+## 🛠️ BJ's EquipTrack 🛠️
 
-To move from CSV to a relational database like **SQLite**, follow these steps:
+### 🚀 Deployment Guide (Docker Only)
+The primary and intended way to run BJ's EquipTrack is using Docker Compose. This handles the application setup, database initialization, and networking in a single step.
 
-### Phase 1: Setup
-1.  **Install dependencies**:
-    ```bash
-    npm install better-sqlite3
-    npm install -D @types/better-sqlite3
-    ```
+### 📦 Step 1: Install Docker & Docker Compose
+Follow the instructions for your Operating System:
 
-### Phase 2: Schema Design
-Create a database initialization script (`src/lib/db.ts`):
-```typescript
-import Database from 'better-sqlite3';
+### 🪟 Windows
+Download and install [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
+- During installation:
+Ensure the "Use the WSL 2 based engine" option is selected.
 
-const db = new Database('inventory.db');
+Once installed, launch Docker Desktop and wait for the **"Engine Running"** status.
 
-// Initialize tables
-db.exec(`
-  CREATE TABLE IF NOT EXISTS team_members (
-    id TEXT PRIMARY KEY,
-    name TEXT NOT NULL
-  );
-
-  CREATE TABLE IF NOT EXISTS inventory (
-    id TEXT PRIMARY KEY,
-    name TEXT NOT NULL,
-    status TEXT DEFAULT 'Available',
-    checkedOutBy TEXT,
-    checkedOutById TEXT,
-    checkedOutDate TEXT,
-    checkedInDate TEXT,
-    FOREIGN KEY(checkedOutById) REFERENCES team_members(id)
-  );
-`);
-
-export default db;
+**NOTE:** Docker Compose is included automatically. 
+### Verify in PowerShell:
+```powershell
+docker compose version
 ```
 
-### Phase 3: Data Migration
-Update `src/lib/data.ts` to use `db` instead of `fs`.
-**Example Refactor for `getInventoryItems`**:
-```typescript
-import db from './db';
-
-export async function getInventoryItems(): Promise<InventoryItem[]> {
-  const stmt = db.prepare('SELECT * FROM inventory');
-  return stmt.all() as InventoryItem[];
-}
+### 🍎 macOS
+Download and install [Docker Desktop for Mac](https://docs.docker.com/desktop/setup/install/mac-install/) (select Apple Silicon or Intel as appropriate).
+Launch Docker Desktop from your Applications folder.
+Verify in Terminal: 
+```
+docker compose version.
 ```
 
-### Phase 4: Docker Updates
-Update `docker-compose.yml` to persist the database file using a volume:
-```yaml
-volumes:
-  - ./inventory.db:/app/inventory.db
+### 🐧 Linux
+Install Docker: 
+```bash
+sudo apt-get update && sudo apt-get install docker.io.
 ```
 
----
+Install the Compose plugin: 
+```bash
+sudo apt-get install docker-compose-v2.
+```
 
-## 🎯 Summary of Workflow
-1.  **Request**: User selects items and identifies themselves.
-2.  **Action**: `checkOutEquipment` called with IDs.
-3.  **Library**: `updateInventory` writes to storage (CSV/SQL).
-4.  **UI**: `revalidatePath` forces Next.js to refresh the data on screen.
+Add your user to the docker group: 
+```bash
+sudo usermod -aG docker $USER (requires logout/login).
+```
+
+Verify in Terminal: 
+```bash
+docker compose version.
+```
+
+### 🛠️ Step 2: Launch the Application
+*Clone/Download this repository.*
+```bash
+git clone https://github.com/teamturnersolutions/BJs-EquipTrack.git
+```
+*Open a Terminal in the project folder.*
+```bash
+cd BJs-EquipTrack
+```
+*Run the 1-Step Setup:*
+```bash
+docker compose up -d --build 
+```
+### NOTE:
+- -d Runs the container in the background (detached).
+- --build Ensures the latest source code is cooked into the image.
+
+## Access the Web Interface:
+URL:
+[http://localhost:9002](http://localhost:9002)
+
+## �️ Database Management
+Since the database (SQLite) runs inside the container, management is handled through the container volume.
+- Data Persistence: Your database is stored in the ./prisma directory on your host machine. It will survive container restarts and updates.
+- Bulk Import: To import your CSV data (if not already done), ensure your .csv files are in the project root and run:
+```
+docker compose exec app npm run db:import
+```
+
+### This is a work in progress
