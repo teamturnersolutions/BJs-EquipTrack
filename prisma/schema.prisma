@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model TeamMember {
+  id             Int             @id @default(autoincrement())
+  name           String
+  inventoryItems InventoryItem[]
+}
+
+model InventoryItem {
+  id             Int         @id @default(autoincrement())
+  name           String
+  status         String
+  checkedOutBy   String?
+  checkedOutById Int?
+  checkedOutDate String?
+  checkedInDate  String?
+  teamMember     TeamMember? @relation(fields: [checkedOutById], references: [id])
+}
+
+model InventoryLog {
+  id             Int      @id @default(autoincrement())
+  itemId         Int
+  itemName       String
+  action         String // "CHECKOUT" or "CHECKIN"
+  teamMemberId   Int?
+  teamMemberName String?
+  timestamp      DateTime @default(now())
+}
