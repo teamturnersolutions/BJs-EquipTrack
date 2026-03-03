@@ -1,147 +1,69 @@
-## **BJ's EquipTrack**
-**Hardware tracking simplified**
+# BJ's EquipTrack 🛠️
 
-**BJ's EquipTrack** is a high-performance equipment management system built to streamline the tracking of essential hardware. Originally developed as InvTrack Pro, the system has been fully migrated to a **relational SQLite database** for robust data handling and persistence.
+**Professional Equipment & Inventory Management System**
 
----
+BJ's EquipTrack is a high-performance, web-based inventory management system optimized for rapid barcode scanning and real-time activity tracking. 
 
-#### **🚀 Key Features**
-*   **Barcode Quick Scan**: The application’s primary draw is its rapid scanning capability. Users can use the **Quick Scan Badge** to identify themselves and the **Quick Scan Item** field to instantly add items to a transaction without leaving the workflow.
-*   **Comprehensive Inventory Management**: Tracks 60 RF units, 32 Radios, and specialized tools like Banders, Grinders, iPads, and Cameras.
-*   **Advanced Filtering**: Users can filter the inventory by **status** (All, Available, Checked Out) or by **category** (e.g., Radios or iPads) to find equipment quickly.
-*   **Detailed Transaction History**: Maintains a log of the **last 100 actions**, recording separate, precise entries and timestamps for every checkout and return.
-*   **Real-time UI Updates**: Utilizing **Next.js Server Actions**, the system revalidates data instantly upon check-in or checkout, ensuring the dashboard always reflects the current status of the fleet.
+This application is designed to run in a **fully self-contained Docker environment**, requiring zero local dependencies (like Node.js or Prisma) on your host machine.
 
 ---
 
-#### **🧩 Technology Stack**
-*   **Framework**: Next.js 15 (App Router)
-*   **Database**: SQLite via Prisma ORM
-*   **Styling**: Tailwind CSS + Shadcn UI
-*   **Runtime**: Node.js 20 (Containerized)
+## 🏗️ Architecture Overview
+
+The system is containerized as a single-service architecture using **Next.js 15** and **SQLite**.
+
+### 🧩 Technology Stack
+- **Framework**: Next.js 15 (App Router)
+- **Database**: SQLite via Prisma ORM
+- **Runtime**: Node.js 20 (Internal to Container)
+- **Deployment**: Docker Engine + Docker Compose
 
 ---
-#### 📁 Project Structure
 
-```text
-├── src/
-│   ├── app/                # Next.js App Router (Pages, Layouts, Actions)
-│   │   ├── (app)/          # Main application routes (Dashboard, etc.)
-│   │   │   ├── audit/      # Equipment audit workflow
-│   │   │   ├── checkin/    # Equipment return/check-in workflow
-│   │   │   ├── checkout/   # Equipment checkout workflow
-│   │   │   └── inventory/  # Gallery view of all equipment
-│   │   ├── actions.ts      # Server Actions (Business logic for mutations)
-│   │   └── layout.tsx      # Root layout (Navigation, Metadata)
-│   ├── components/         # Reusable React components
-│   │   ├── ui/             # Radix UI / Shadcn based components (Lower level)
-│   │   ├── inventory-card.tsx # Visual card for equipment items
-│   │   └── app-header.tsx  # Global navigation header
-│   ├── lib/                # Shared utilities and data access
-│   │   ├── data.ts         # Data Access Layer (Currently CSV-based)
-│   │   ├── types.ts        # TypeScript interfaces for Items/Members
-│   │   └── utils.ts        # Formatting and Tailwind helpers
-├── public/                 # Static assets (Not present, created during build)
-├── inventory.csv           # Primary data file for equipment
-├── team-members.csv        # Primary data file for team members
-├── Dockerfile              # Multi-stage production build configuration
-└── docker-compose.yml      # Orchestration for local dev and deployment
-```
+## 🚀 Deployment Guide (Lean Docker on Ubuntu Linux)
 
----
-## 🧩 Component Breakdown
+I recommend using the **Docker Engine** directly instead of the resource-intensive [Docker Desktop](https://www.docker.com/products/docker-desktop/), but if you want to use Docker Desktop just follow this [Link](https://docs.docker.com/desktop/setup/install/windows-install/) for installation instructions. My preferred method for deployment is on Ubuntu Linux. With that said, I put together a quick deployment script to make it easier to deploy, but you can also use the commands below to deploy the application manually on any platform of your choice:
 
-#### 1. Data Access Layer (`src/lib/data.ts`)
-This is the heart of the application's data handling. It currently uses `fs` to read and write to CSV files.
-- `getInventoryItems()`: Loads all equipment.
-- `updateInventory()`: Merges updates back into the CSV.
-- `getTeamMembers()`: Loads the list of personnel.
-
-#### 2. Server Actions (`src/app/actions.ts`)
-Encapsulates business logic that runs on the server.
-- `checkOutEquipment`: Validates status, updates the item with the member's name/ID, and triggers a revalidation of the UI.
-- `checkInEquipment`: Resets the item status to 'Available' and clears assignment data.
-
-#### 3. UI Components (`src/components/`)
-- **Inventory Card**: Responsive card showing item thumbnail, status badge, and assignment details. It uses conditional styling based on the `status` field.
-- **UI Directory**: Contains specialized components like Buttons, Dialogs, and Select menus (standard Shadcn-style architecture).
-
-
-## 🚀 Deployment Guide (Docker)
-The primary and intended way to run BJ's EquipTrack is using Docker Compose. This handles the application setup, database initialization, and networking in a single step.
-
-#### 📦 Step 1: Install Docker Desktop
-Follow the instructions for your Operating System:
-
-#### 🪟 Windows
-Download and install [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
-- During installation:
-Ensure the "Use the WSL 2 based engine" option is selected.
-
-Once installed, launch Docker Desktop and wait for the **"Engine Running"** status.
-
-**NOTE:** Docker Compose is included automatically. 
-#### Verify in PowerShell:
-```powershell
-docker compose version
-```
-
-#### 🍎 macOS
-Download and install [Docker Desktop for Mac](https://docs.docker.com/desktop/setup/install/mac-install/) (select Apple Silicon or Intel as appropriate).
-Launch Docker Desktop from your Applications folder.
-Verify in Terminal: 
-```
-docker compose version.
-```
-
-#### 🐧 Linux
-Install Docker: 
+#### Platform with Docker already installed:
 ```bash
-sudo apt-get update && sudo apt-get install docker.io.
+docker pull teamturnersolutions/equiptrack:1.0.0
+docker run -d -p 9002:9002 --name equiptrack -v equiptrack-data:/app/data teamturnersolutions/equiptrack:1.0.0
 ```
 
-Install the Compose plugin: 
-```bash
-sudo apt-get install docker-compose-v2.
-```
+#### 🐧 Ubuntu Linux
 
-Add your user to the docker group: 
-```bash
-sudo usermod -aG docker $USER (requires logout/login).
-```
-
-Verify in Terminal: 
-```bash
-docker compose version.
-```
-
-#### 🛠️ Step 2: Launch the Application
-*Clone/Download this repository.*
+1. Clone the repo to your machine & change to the repo directory
 ```bash
 git clone https://github.com/teamturnersolutions/BJs-EquipTrack.git
+cd EquipTrack
 ```
-*Open a Terminal in the project folder.*
+
+2. Make the script executable
 ```bash
-cd BJs-EquipTrack
+chmod +x Docker.sh
 ```
-*Run the 1-Step Setup:*
+
+3. Run the script to spin up the container
 ```bash
-docker compose up -d --build 
-```
-#### NOTE:
-- -d Runs the container in the background (detached).
-- --build Ensures the latest source code is cooked into the image.
-
-### Access the Web Interface:
-URL:
-[http://localhost:9002](http://localhost:9002)
-
-#### �️ Database Management
-Since the database (SQLite) runs inside the container, management is handled through the container volume.
-- Data Persistence: Your database is stored in the ./prisma directory on your host machine. It will survive container restarts and updates.
-- Bulk Import: To import your CSV data (if not already done), ensure your .csv files are in the project root and run:
-```
-docker compose exec app npm run db:import
+./Docker.sh
 ```
 
-### This is a work in progress
+4. **Access the App**:
+   - URL: **[http://localhost:9002](http://localhost:9002)**
+
+---
+
+## 🗄️ Database & Dev Commands
+
+Since all dependencies are inside the container, use `docker compose exec` to run management tasks:
+
+| Action | Command |
+| :--- | :--- |
+| **Initial CSV Import** | `docker compose exec app npm run db:import` |
+| **View Database (Studio)** | `docker compose exec app npx prisma studio` (Open port 5555) |
+| **Rebuild After Change** | `docker compose up -d --build` |
+
+---
+
+## 🔐 Support
+Project is Under Development. Intended to be for Internal Use Only for the BJ's Organization.
