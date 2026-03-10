@@ -20,6 +20,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Generate Prisma Client
 RUN npx prisma generate
 
+# Ensure database schema is applied for prerendering
+RUN npx prisma db push --accept-data-loss
+
 # Build Next.js
 RUN npm run build
 
