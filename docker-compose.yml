@@ -1,0 +1,13 @@
+services:
+  app:
+    build: .
+    image: teamturnersolutions/equiptrack:latest
+    ports:
+      - "9002:9002"
+    volumes:
+      - ./prisma:/app/prisma
+      - ./prisma:/app/prisma
+    environment:
+      - DATABASE_URL=file:/app/prisma/dev.db
+      - NODE_ENV=production
+      - TZ=America/New_York
