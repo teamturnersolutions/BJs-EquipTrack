@@ -2,68 +2,74 @@
 
 **Professional Equipment & Inventory Management System**
 
-BJ's EquipTrack is a high-performance, web-based inventory management system optimized for rapid barcode scanning and real-time activity tracking. 
+> [!IMPORTANT]
+> **Work in Progress (WIP)**: This application is currently under active development and is intended for **Internal Use Only** within the BJ's organization.
 
-This application is designed to run in a **fully self-contained Docker environment**, requiring zero local dependencies (like Node.js or Prisma) on your host machine.
-
----
-
-## 🏗️ Architecture Overview
-
-The system is containerized as a single-service architecture using **Next.js 15** and **SQLite**.
-
-### 🧩 Technology Stack
-- **Framework**: Next.js 15 (App Router)
-- **Database**: SQLite via Prisma ORM
-- **Runtime**: Node.js 20 (Internal to Container)
-- **Deployment**: Docker Engine + Docker Compose
+BJ's EquipTrack is a streamlined, high-performance inventory management solution designed to simplify the daily routine of checking equipment in and out. By focusing on a "less is more" UI philosophy, the app relieves the operational burden on end-users while maintaining rigorous tracking and accountability.
 
 ---
 
-## 🚀 Deployment Guide (Lean Docker on Ubuntu Linux)
+## ✨ Core Features
 
-I recommend using the **Docker Engine** directly instead of the resource-intensive [Docker Desktop](https://www.docker.com/products/docker-desktop/), but if you want to use Docker Desktop just follow this [Link](https://docs.docker.com/desktop/setup/install/windows-install/) for installation instructions. My preferred method for deployment is on Ubuntu Linux. With that said, I put together a quick deployment script to make it easier to deploy, but you can also use the commands below to deploy the application manually on any platform of your choice:
+### 📋 Versatile Inventory Management
+EquipTrack is designed to manage a diverse range of critical operational equipment, including:
+- **Zebra Handheld RF Units** (Tagged: `RF`)
+- **Personnel Mobile Devices** (Tagged: `iPad`)
+- **Handheld Walkie Talkies** (Tagged: `Radio`)
+- **Digital Cameras** (Tagged: `Camera`)
+- **Rechargeable Power Tools**:
+  - **Banders** (Tagged: `Bander`)
+  - **Grinders** (Tagged: `Grinder`)
 
-#### Platform with Docker already installed:
-```bash
-docker pull teamturnersolutions/equiptrack:1.0.0
-docker run -d -p 9002:9002 --name equiptrack -v equiptrack-data:/app/data teamturnersolutions/equiptrack:1.0.0
-```
+### ⚡ Rapid Execution & Scanning
+- **Barcode Support**: Optimized for lightning-fast processing using **Code128** barcode scanning.
+- **Simplified UI**: A minimal interface that allows any user to quickly understand and execute check-in/check-out tasks without extensive training.
 
-#### 🐧 Ubuntu Linux
+### 📥 Effortless Data Entry
+- **Bulk Imports**: Easily onboard hundreds of users or inventory items via CSV upload.
+- **Manual Entry**: Quick individual entry forms for on-the-fly updates.
+- **Reference Data**: See [team-members.csv](team-members.csv) and [inventory.csv](inventory.csv) for current data structures.
 
-1. Clone the repo to your machine & change to the repo directory
-```bash
-git clone https://github.com/teamturnersolutions/BJs-EquipTrack.git
-cd EquipTrack
-```
-
-2. Make the script executable
-```bash
-chmod +x Docker.sh
-```
-
-3. Run the script to spin up the container
-```bash
-./Docker.sh
-```
-
-4. **Access the App**:
-   - URL: **[http://localhost:9002](http://localhost:9002)**
+### 🔍 Accountability & History
+- **Transaction Logs**: Full visibility into the history of every device. 
+- **Damage Tracking**: Easily identify the last user of a piece of equipment in the event of physical damage or loss.
 
 ---
 
-## 🗄️ Database & Dev Commands
+## 🏗️ Architecture & Deployment
 
-Since all dependencies are inside the container, use `docker compose exec` to run management tasks:
+The system is built as a fully self-contained Docker environment, ensuring "zero-dependency" deployment on any host machine.
 
-| Action | Command |
-| :--- | :--- |
-| **Initial CSV Import** | `docker compose exec app npm run db:import` |
-| **View Database (Studio)** | `docker compose exec app npx prisma studio` (Open port 5555) |
-| **Rebuild After Change** | `docker compose up -d --build` |
+- **Stack**: Next.js 15 (App Router), SQLite, Prisma ORM.
+- **Deployment**: Single-service architecture via Docker Compose.
+
+### Quick Start (Ubuntu Linux)
+
+1. **Clone & Navigate**:
+   ```bash
+   git clone https://github.com/teamturnersolutions/BJs-EquipTrack.git
+   cd BJs-EquipTrack
+   ```
+
+2. **Launch**:
+   ```bash
+   chmod +x Docker.sh
+   ./Docker.sh
+   ```
+
+3. **Access**:
+   Open **[http://localhost:9002](http://localhost:9002)** in your browser.
 
 ---
 
-## 🔐 Support
-Project is Under Development. Intended to be for Internal Use Only for the BJ's Organization.
+## 🚀 Future Roadmap
+
+We are constantly evolving to make equipment tracking even faster and more integrated:
+- **NFC Integration**: Support for NFC tags to enable "tap-and-go" check-ins.
+- **Android APK**: Mobile-native version for dedicated handheld devices.
+- **AI Agent Integration**: An intelligent assistant to provide proactive instructions and resolve anomalous inventory issues.
+
+---
+
+## 🔐 Support & Internal Use
+Project managed by **Team Turner Solutions**. For support or feature requests, please contact the internal dev team.

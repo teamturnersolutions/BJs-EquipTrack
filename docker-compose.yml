@@ -1,11 +1,10 @@
 services:
   app:
     build: .
-    image: teamturnersolutions/equiptrack:latest
+    image: teamturnersolutions/equiptrack:2.0
     ports:
       - "9002:9002"
     volumes:
-      - ./prisma:/app/prisma
       - ./prisma:/app/prisma
     environment:
       - DATABASE_URL=file:/app/prisma/dev.db
