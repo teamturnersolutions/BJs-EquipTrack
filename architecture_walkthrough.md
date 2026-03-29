@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-**Monolithic** — Not API-driven. This is a **Next.js 16 full-stack monolith** where the database, business logic, and UI all live inside a single application process. There is no separate API service. Data mutations flow via **Next.js Server Actions** and reads are performed directly in **React Server Components (RSCs)** using **Prisma ORM**.
+This is a **Next.js 16 full-stack monolith** where the database, business logic, and UI all live inside a single application process. Data mutations flow via **Next.js Server Actions** and reads are performed directly in **React Server Components (RSCs)** using **Prisma ORM**.
 
 ---
 
@@ -259,15 +259,3 @@ graph LR
 | Barcode scanner–optimized UX (continuous mode) | No NFC support yet (planned) |
 | Portable Docker image, single container | No role-based access control |
 | CSV bulk import for rapid onboarding | No item categories or equipment types at DB level |
-
----
-
-## Follow-Up Questions
-
-To help evolve this architecture, I'd love to know:
-
-1. **Multi-user concurrency**: Will multiple staff members use this simultaneously? If yes, SQLite's single-writer model could become a bottleneck worth addressing (e.g., PostgreSQL migration).
-2. **Authentication**: Is there a plan to add login/roles (e.g., admin vs. floor staff)? This would significantly change the architecture.
-3. **Equipment categories**: The DB stores items by name only. Is there a plan to add item types (e.g., `iPad`, `Zebra RF`, `Radio`) as structured fields?
-4. **Android APK / NFC**: The README mentions future plans for an Android app and NFC. Is the intent to build a React Native wrapper or a separate native app? This would determine whether a real REST/GraphQL API is needed.
-5. **History purging**: The Prisma log grows unboundedly. Is there a retention policy planned?
