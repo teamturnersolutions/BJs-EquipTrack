@@ -55,6 +55,7 @@ The system is built as a fully self-contained Docker environment, ensuring "zero
    ```bash
    chmod +x Docker.sh
    ./Docker.sh
+   docker compose up --build
    ```
 
 3. **Access**:
