@@ -55,6 +55,11 @@ export default function Home() {
         <p className="mt-2 text-lg text-muted-foreground">
           Hardware tracking simplified
         </p>
+        <div className="mt-4">
+          <Link href="/overview" className="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all">
+            <span>View Product Overview & Materials</span> →
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
